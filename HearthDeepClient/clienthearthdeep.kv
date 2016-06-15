@@ -1,6 +1,6 @@
 #:kivy 1.0.9
 
-<LoginClient>
+<LoginClientScreen>
     BoxLayout:
         id: layout
         orientation: 'vertical'
@@ -13,4 +13,16 @@
         Button:
             id: login
             text: 'Connect'
-            on_press: root.on_login_call(self,pseudo=user_pseudo.text, password=user_password.text)
+            on_press: root.on_login_call(self,pseudo=user_pseudo, password=user_password)
+
+<HearthDeepClientScreen>
+    BoxLayout:
+        id: layout
+        orientation: 'horizontal'
+        Button:
+            id: send
+            text: 'Send Logs'
+            on_press: root.on_send_call(self)
+        Button:
+            id: logconfig
+            text: 'Logs Config'
