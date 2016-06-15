@@ -17,12 +17,41 @@
 
 <HearthDeepClientScreen>
     BoxLayout:
-        id: layout
-        orientation: 'horizontal'
-        Button:
-            id: send
-            text: 'Send Logs'
-            on_press: root.on_send_call(self)
-        Button:
-            id: logconfig
-            text: 'Logs Config'
+        orientation: 'vertical'
+        BoxLayout:
+            id: layout
+            orientation: 'horizontal'
+            Button:
+                id: send
+                text: 'Send Logs'
+                on_press: root.on_send_call(self)
+            Button:
+                id: logconfig
+                text: 'Logs Config'
+                on_press: root.show_config()
+
+        Label:
+            text: root.message
+<ConfigDialog>:
+    BoxLayout:
+        size: root.size
+        pos: root.pos
+        orientation: "vertical"
+        FileChooserListView:
+            id: filechooser
+
+        BoxLayout:
+            size_hint_y: None
+            height: 30
+            Button:
+                text: "Cancel"
+                on_release: root.cancel()
+
+            Button:
+                text: "Select"
+                on_release: root.config(filechooser.path, filechooser.selection), root.cancel()
+
+<HearthClientAlert>:
+    Label:
+        id: messenger
+        text: 'That work !!'

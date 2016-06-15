@@ -2,11 +2,14 @@ from kivy.app import App
 from kivy.uix.widget import Widget
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.button import Button
 from kivy.uix.textinput import TextInput
 from kivy.uix.label import Label
 from kivy.logger import Logger
 from kivy.core.window import Window
+from kivy.properties import ObjectProperty
+from kivy.uix.popup import Popup
 from kivy.uix.screenmanager import ScreenManager, Screen
 
 
@@ -18,7 +21,7 @@ import json
 import requests
 
 
-Window.size = (320, 240)
+Window.size = (320, 200)
 
 # class ClientHearthDeepWidget(BoxLayout):
 #     def __init__(self, **kwargs):
@@ -30,6 +33,11 @@ Window.size = (320, 240)
 #
 #     def on_touch_down(self, touch):
 #         self.display_message(message="T'a vu !!!")
+
+class HearthClientAlert(Label):
+    def display(self, message, color):
+        self.text = message
+        self.refresh()
 
 class LoginClientScreen(Screen):
     def on_login_call(self, touch, pseudo, password):
@@ -50,8 +58,9 @@ class LoginClientScreen(Screen):
         # Logger.info('CHDCMENU: pseudo : '+ str(pseudo) + ' pass : '+ str(password))
 
 class HearthDeepClientScreen(Screen):
-    user_pseudo = ''
-    user_password = ''
+    user_pseudo = ObjectProperty(None)
+    user_password = ObjectProperty(None)
+    message = ObjectProperty("Wellcome !")
     def on_send_call(self,touch):
         Logger.info('CHDCMenu: Function Send call')
 
@@ -63,6 +72,25 @@ class HearthDeepClientScreen(Screen):
     def on_connect(self,pseudo,password):
         self.user_pseudo = pseudo
         self.user_password = password
+
+    def dismiss_popup(self):
+        self._popup.dismiss()
+
+    def config_path(self, path, filename):
+        Logger.info('CHDCMenu: Path ~~> ' + str(path) + ' filename ~~> '  + str(filename))
+        self.message = 'CHDCMenu: Path ~~> ' + str(path) + ' filename ~~> '  + str(filename)
+
+
+    def show_config(self):
+        content = ConfigDialog(config=self.config_path, cancel=self.dismiss_popup)
+        self._popup = Popup(title="Config file", content=content,
+                            size_hint=(0.9, 0.9))
+        self._popup.open()
+
+class ConfigDialog(FloatLayout):
+    config = ObjectProperty(None)
+    cancel = ObjectProperty(None)
+
 
 # class ClientHearthDeepClientMenu(BoxLayout):
 #     def __init__(self, **kwargs):
