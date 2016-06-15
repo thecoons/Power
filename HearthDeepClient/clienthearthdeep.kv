@@ -1,0 +1,16 @@
+#:kivy 1.0.9
+
+<LoginClient>
+    BoxLayout:
+        id: layout
+        orientation: 'vertical'
+        TextInput:
+            id: user_pseudo
+            text: 'Pseudo'
+        TextInput:
+            id: user_password
+            text: 'Password'
+        Button:
+            id: login
+            text: 'Connect'
+            on_press: root.on_login_call(self,pseudo=user_pseudo.text, password=user_password.text)
