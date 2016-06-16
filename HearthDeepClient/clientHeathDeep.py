@@ -63,10 +63,13 @@ class LoginClientScreen(Screen):
 class HearthDeepClientScreen(Screen):
     user_pseudo = ObjectProperty(None)
     user_password = ObjectProperty(None)
+    logs_path = ObjectProperty(None)
     message = ObjectProperty("Wellcome !")
     color = ListProperty([0.5,1,0.5,1])
     def on_send_call(self,touch):
         Logger.info('CHDCMenu: Function Send call')
+
+        self.loadConfig()
 
         files = {'brutLog': open('hsgame.log', 'rb')}
         res = requests.post('http://127.0.0.1:8000/api/hearthlog/', files=files, auth=HTTPBasicAuth(self.user_pseudo, self.user_password))
@@ -124,6 +127,11 @@ class HearthDeepClientScreen(Screen):
             if champs in line:
                 line = champs+':'+valeur
             sys.stdout.write(line)
+
+    def loadConfig(self):
+        f = open('config/hearthdeep.config','r')
+        match = re.match(r'^LogsPath:(.*)', f.read())
+        self.logs_path = match.group(1)
 
 
 class ConfigDialog(FloatLayout):
