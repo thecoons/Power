@@ -11,7 +11,8 @@ from kivy.core.window import Window
 from kivy.properties import ObjectProperty, ListProperty
 from kivy.uix.popup import Popup
 from kivy.uix.screenmanager import ScreenManager, Screen
-import os
+import fileinput
+import sys,os
 import re
 
 
@@ -88,6 +89,7 @@ class HearthDeepClientScreen(Screen):
         if(filename):
             if(re.search(r"log\.config$",filename[0])):
                 self.rewrite_logconfig(filename[0])
+                self.setConfigClient('LogsPath',path+'/Logs/')
                 self.message = "Config match and rewrite :)"
             else:
                 self.message = "That not the \"log.config\" file"
@@ -97,6 +99,7 @@ class HearthDeepClientScreen(Screen):
             checkList = ['Logs','Cache','options.txt']
             if(set(checkList)<set(listFileRep)):
                 self.rewrite_logconfig(path+'/log.config')
+                self.setConfigClient('LogsPath',path+'/Logs/')
                 self.message = "Config match and rewrite"
             else:
                 self.message = "Bad setting repository"
@@ -115,6 +118,13 @@ class HearthDeepClientScreen(Screen):
         self._popup = Popup(title="Config file", content=content,
                             size_hint=(0.9, 0.9))
         self._popup.open()
+
+    def setConfigClient(self, champs, valeur):
+        for line in fileinput.input('config/hearthdeep.config', inplace=True):
+            if champs in line:
+                line = champs+':'+valeur
+            sys.stdout.write(line)
+
 
 class ConfigDialog(FloatLayout):
     config = ObjectProperty(None)
