@@ -8,9 +8,11 @@ from kivy.uix.textinput import TextInput
 from kivy.uix.label import Label
 from kivy.logger import Logger
 from kivy.core.window import Window
-from kivy.properties import ObjectProperty
+from kivy.properties import ObjectProperty, ListProperty
 from kivy.uix.popup import Popup
 from kivy.uix.screenmanager import ScreenManager, Screen
+import os
+import re
 
 
 from requests.auth import HTTPBasicAuth
@@ -45,7 +47,7 @@ class LoginClientScreen(Screen):
 
         res = requests.get('http://127.0.0.1:8000/api/hearthlog/', auth=HTTPBasicAuth(pseudo.text, password.text))
 
-        Logger.info('CHDCMenu: status_code req :'+ str(res.status_code))
+        Logger.info('CHDCMenu: status_code req :' + str(res.status_code))
 
         if(res.status_code == 200):
             pseudo.background_color = [0.5,1,0.5,1]
@@ -61,12 +63,17 @@ class HearthDeepClientScreen(Screen):
     user_pseudo = ObjectProperty(None)
     user_password = ObjectProperty(None)
     message = ObjectProperty("Wellcome !")
+    color = ListProperty([0.5,1,0.5,1])
     def on_send_call(self,touch):
         Logger.info('CHDCMenu: Function Send call')
 
         files = {'brutLog': open('hsgame.log', 'rb')}
         res = requests.post('http://127.0.0.1:8000/api/hearthlog/', files=files, auth=HTTPBasicAuth(self.user_pseudo, self.user_password))
 
+        if(res.status_code == 201):
+            self.message = "Successful logs send !"
+        else:
+            self.message = "Fail to send logs ..."
         Logger.info('CHDCMenu: status_code req :'+ str(res.status_code))
 
     def on_connect(self,pseudo,password):
@@ -78,8 +85,30 @@ class HearthDeepClientScreen(Screen):
 
     def config_path(self, path, filename):
         Logger.info('CHDCMenu: Path ~~> ' + str(path) + ' filename ~~> '  + str(filename))
-        self.message = 'CHDCMenu: Path ~~> ' + str(path) + ' filename ~~> '  + str(filename)
+        if(filename):
+            if(re.search(r"log\.config$",filename[0])):
+                self.rewrite_logconfig(filename[0])
+                self.message = "Config match and rewrite :)"
+            else:
+                self.message = "That not the \"log.config\" file"
+            # self.message = 'filename = ' + str(filename)
+        elif(path):
+            listFileRep = os.listdir(path)
+            checkList = ['Logs','Cache','options.txt']
+            if(set(checkList)<set(listFileRep)):
+                self.rewrite_logconfig(path+'/log.config')
+                self.message = "Config match and rewrite"
+            else:
+                self.message = "Bad setting repository"
+            # Logger.info('CHDCMenu: path : '+ path)
+            # for subpath in listFileRep:
+            #     Logger.info('CHDCMenu: file : '+ subpath)
+            # self.message = 'path = ' + str(path)
 
+    def rewrite_logconfig(self,filename):
+        logFile = open('config/log.config','r')
+        orgLogFile = open(filename,'w')
+        orgLogFile.write(logFile.read())
 
     def show_config(self):
         content = ConfigDialog(config=self.config_path, cancel=self.dismiss_popup)
