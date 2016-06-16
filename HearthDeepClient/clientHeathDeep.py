@@ -13,6 +13,7 @@ from kivy.uix.popup import Popup
 from kivy.uix.screenmanager import ScreenManager, Screen
 import fileinput
 import sys,os
+import json
 import re
 
 
@@ -45,16 +46,16 @@ class HearthClientAlert(Label):
 class LoginClientScreen(Screen):
     def on_login_call(self, touch, pseudo, password):
         Logger.info('CHDCMenu: Function Send call')
-
+        listupload=[]
         res = requests.get('http://127.0.0.1:8000/api/hearthlog/', auth=HTTPBasicAuth(pseudo.text, password.text))
-
-        Logger.info('CHDCMenu: status_code req :' + str(res.status_code))
-
         if(res.status_code == 200):
+            resjson = res.json()
+            for js in resjson:
+                listupload.append(js['filename'])
             pseudo.background_color = [0.5,1,0.5,1]
             password.background_color = [0.5,1,0.5,1]
             self.manager.current = 'client'
-            self.manager.current_screen.on_connect(pseudo=pseudo.text, password=password.text)
+            self.manager.current_screen.on_connect(pseudo=pseudo.text, password=password.text,listupload=listupload)
         else:
             pseudo.background_color = [1,0.5,0.5,1]
             password.background_color = [1,0.5,0.5,1]
@@ -64,15 +65,14 @@ class HearthDeepClientScreen(Screen):
     user_pseudo = ObjectProperty(None)
     user_password = ObjectProperty(None)
     logs_path = ObjectProperty(None)
+    list_upload = ListProperty(None)
     message = ObjectProperty("Wellcome !")
     color = ListProperty([0.5,1,0.5,1])
     def on_send_call(self,touch):
         Logger.info('CHDCMenu: Function Send call')
 
-        self.loadConfig()
-
         files = {'brutLog': open('hsgame.log', 'rb')}
-        res = requests.post('http://127.0.0.1:8000/api/hearthlog/', files=files, auth=HTTPBasicAuth(self.user_pseudo, self.user_password))
+        res = requests.post('http://127.0.0.1:8000/api/hearthlog/', files=files,data={'filename':'test.txt'}, auth=HTTPBasicAuth(self.user_pseudo, self.user_password))
 
         if(res.status_code == 201):
             self.message = "Successful logs send !"
@@ -80,9 +80,11 @@ class HearthDeepClientScreen(Screen):
             self.message = "Fail to send logs ..."
         Logger.info('CHDCMenu: status_code req :'+ str(res.status_code))
 
-    def on_connect(self,pseudo,password):
+    def on_connect(self,pseudo,password,listupload):
         self.user_pseudo = pseudo
         self.user_password = password
+        self.list_upload = listupload
+        self.loadConfig()
 
     def dismiss_popup(self):
         self._popup.dismiss()
@@ -92,7 +94,8 @@ class HearthDeepClientScreen(Screen):
         if(filename):
             if(re.search(r"log\.config$",filename[0])):
                 self.rewrite_logconfig(filename[0])
-                self.setConfigClient('LogsPath',path+'/Logs/')
+                self.setConfigClient('LogsPath', path+'/Logs/')
+                self.logs_path = path+'/Logs/'
                 self.message = "Config match and rewrite :)"
             else:
                 self.message = "That not the \"log.config\" file"
@@ -103,6 +106,7 @@ class HearthDeepClientScreen(Screen):
             if(set(checkList)<set(listFileRep)):
                 self.rewrite_logconfig(path+'/log.config')
                 self.setConfigClient('LogsPath',path+'/Logs/')
+                self.logs_path = path+'/Logs/'
                 self.message = "Config match and rewrite"
             else:
                 self.message = "Bad setting repository"

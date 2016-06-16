@@ -3,8 +3,9 @@ from __future__ import unicode_literals
 from django.db import models
 
 class HearthLog(models.Model):
-    brutLog = models.FileField()
+    brutLog = models.FileField(upload_to='logs/%Y/%m/%d/')
     created = models.DateTimeField(auto_now_add=True)
+    filename = models.TextField()
     owner = models.ForeignKey('auth.User', related_name='hearthlog')
 
     class Meta:
