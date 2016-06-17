@@ -8,9 +8,10 @@ from kivy.uix.textinput import TextInput
 from kivy.uix.label import Label
 from kivy.logger import Logger
 from kivy.core.window import Window
-from kivy.properties import ObjectProperty, ListProperty
+from kivy.properties import ObjectProperty, ListProperty, BooleanProperty, StringProperty
 from kivy.uix.popup import Popup
 from kivy.uix.screenmanager import ScreenManager, Screen
+from kivy.clock import Clock
 import fileinput
 import sys,os
 import json
@@ -43,7 +44,7 @@ class HearthClientAlert(Label):
     pass
 
 class LoginClientScreen(Screen):
-    def on_login_call(self, touch, pseudo, password):
+    def on_login_call(self, pseudo, password):
         Logger.info('CHDCMenu: Function Send call')
         listupload=[]
         res = requests.get('http://127.0.0.1:8000/api/hearthlog/', auth=HTTPBasicAuth(pseudo.text, password.text))
@@ -61,13 +62,15 @@ class LoginClientScreen(Screen):
         # Logger.info('CHDCMENU: pseudo : '+ str(pseudo) + ' pass : '+ str(password))
 
 class HearthDeepClientScreen(Screen):
+    power = BooleanProperty(False)
     user_pseudo = ObjectProperty(None)
     user_password = ObjectProperty(None)
     logs_path = ObjectProperty(None)
     list_upload = ListProperty(None)
     message = ObjectProperty("Wellcome !")
     color = ListProperty([0.5,1,0.5,1])
-    def on_send_call(self,touch):
+    state = StringProperty("OFF..")
+    def on_send_call(self,dt):
         Logger.info('CHDCMenu: Function Send call')
         list_in_rep = os.listdir(self.logs_path)
         gen = [line for line in list_in_rep if line not in self.list_upload]
@@ -75,10 +78,24 @@ class HearthDeepClientScreen(Screen):
             stat = os.stat(self.logs_path+line)
             last_touch = int(round(time.time() * 1000)) - stat.st_mtime
             Logger.info('CHDCMenu: '+line+' '+str(last_touch))
-            if(last_touch > 900000):
+            if(last_touch > 60000):
                 self.send_log(line)
                 self.list_upload.append(line)
 
+        if not gen:
+            self.message = 'Nothing to send... yet'
+
+
+    def power_client(self):
+        if(not self.power):
+            self.power = True
+            self.state = 'ON!'
+            Clock.schedule_interval(self.on_send_call, 1*10)
+        else:
+            self.state = 'OFF..'
+            self.power = False
+            self.message = 'Ready for a next round !'
+            Clock.unschedule(self.on_send_call)
 
     def send_log(self,filename):
         files = {'brutLog': open(self.logs_path+filename, 'rb')}
