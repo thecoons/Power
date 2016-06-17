@@ -1,0 +1,33 @@
+2016-06-16 14:13:06.505: Error loading config file client.config
+
+2016-06-16 14:13:06.505: 2016-06-16 14:13:06.505: Warning: Failed to read DeviceEmulation from client.config
+2016-06-16 14:13:06.570: Connection Request to 'eu.actual.battle.net:1119' with Version '83886080'
+2016-06-16 14:13:08.069: System Info:
+2016-06-16 14:13:08.070: SystemInfo - Device Name: THECOON-PC
+2016-06-16 14:13:08.070: SystemInfo - Device Model: Intel(R) Core(TM) i5-4690K CPU @ 3.50GHz (4039 MB)
+2016-06-16 14:13:08.071: SystemInfo - OS: Windows 7 Service Pack 1 (6.1.7601) 64bit
+2016-06-16 14:13:08.071: SystemInfo - CPU Type: Intel(R) Core(TM) i5-4690K CPU @ 3.50GHz
+2016-06-16 14:13:08.072: SystemInfo - CPU Cores: 4
+2016-06-16 14:13:08.072: SystemInfo - System Memory: 4039
+2016-06-16 14:13:08.073: SystemInfo - Screen Resolution: 1680x1050
+2016-06-16 14:13:08.073: SystemInfo - Screen DPI: 96
+2016-06-16 14:13:08.074: SystemInfo - GPU ID: 26814
+2016-06-16 14:13:08.074: SystemInfo - GPU Name: AMD Radeon HD 5700 Series
+2016-06-16 14:13:08.075: SystemInfo - GPU Vendor: ATI
+2016-06-16 14:13:08.075: SystemInfo - GPU Memory: 1014
+2016-06-16 14:13:08.075: SystemInfo - GPU Shader Level: 30
+2016-06-16 14:13:08.076: SystemInfo - GPU NPOT Support: Full
+2016-06-16 14:13:08.076: SystemInfo - Graphics API (version): Direct3D 9.0c [aticfx32.dll 8.17.10.1404]
+2016-06-16 14:13:08.077: SystemInfo - Graphics API (type): Direct3D9
+2016-06-16 14:13:08.078: SystemInfo - Graphics Supported Render Target Count: 4
+2016-06-16 14:13:08.078: SystemInfo - Graphics Supports 3D Textures: True
+2016-06-16 14:13:08.079: SystemInfo - Graphics Supports Compute Shaders: False
+2016-06-16 14:13:08.079: SystemInfo - Graphics Supports Image Effects: True
+2016-06-16 14:13:08.080: SystemInfo - Graphics Supports Render Textures: True
+2016-06-16 14:13:08.080: SystemInfo - Graphics Supports Render To Cubemap: True
+2016-06-16 14:13:08.091: SystemInfo - Graphics Supports Shadows: True
+2016-06-16 14:13:08.092: SystemInfo - Graphics Supports Sparse Textures: False
+2016-06-16 14:13:08.092: SystemInfo - Graphics Supports Stencil: 1
+2016-06-16 14:13:08.093: SystemInfo - Graphics RenderTextureFormat.ARGBHalf: True
+2016-06-16 14:13:08.093: SystemInfo - Graphics Metal Support: False
+2016-06-16 14:13:10.476: Web URL for auth: https://eu.battle.net/login/fr/flow/wtcg.app?externalChallenge=login
