@@ -13,7 +13,7 @@
         Button:
             id: login
             text: 'Connect'
-            on_press: root.on_login_call(self,pseudo=user_pseudo, password=user_password)
+            on_press: root.on_login_call(pseudo=user_pseudo, password=user_password)
 
 <HearthDeepClientScreen>
     BoxLayout:
@@ -23,8 +23,8 @@
             orientation: 'horizontal'
             Button:
                 id: send
-                text: 'Send Logs'
-                on_press: root.on_send_call(self)
+                text: root.state
+                on_press: root.power_client()
             Button:
                 id: logconfig
                 text: 'Logs Config'
