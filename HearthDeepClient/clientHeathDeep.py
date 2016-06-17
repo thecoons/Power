@@ -14,6 +14,7 @@ from kivy.uix.screenmanager import ScreenManager, Screen
 import fileinput
 import sys,os
 import json
+import time
 import re
 
 
@@ -39,9 +40,7 @@ Window.size = (320, 200)
 #         self.display_message(message="T'a vu !!!")
 
 class HearthClientAlert(Label):
-    def display(self, message, color):
-        self.text = message
-        self.refresh()
+    pass
 
 class LoginClientScreen(Screen):
     def on_login_call(self, touch, pseudo, password):
@@ -70,15 +69,26 @@ class HearthDeepClientScreen(Screen):
     color = ListProperty([0.5,1,0.5,1])
     def on_send_call(self,touch):
         Logger.info('CHDCMenu: Function Send call')
+        list_in_rep = os.listdir(self.logs_path)
+        gen = [line for line in list_in_rep if line not in self.list_upload]
+        for line in gen:
+            stat = os.stat(self.logs_path+line)
+            last_touch = int(round(time.time() * 1000)) - stat.st_mtime
+            Logger.info('CHDCMenu: '+line+' '+str(last_touch))
+            if(last_touch > 900000):
+                self.send_log(line)
+                self.list_upload.append(line)
 
-        files = {'brutLog': open('hsgame.log', 'rb')}
-        res = requests.post('http://127.0.0.1:8000/api/hearthlog/', files=files,data={'filename':'test.txt'}, auth=HTTPBasicAuth(self.user_pseudo, self.user_password))
+
+    def send_log(self,filename):
+        files = {'brutLog': open(self.logs_path+filename, 'rb')}
+        res = requests.post('http://127.0.0.1:8000/api/hearthlog/', files=files,data={'filename':filename}, auth=HTTPBasicAuth(self.user_pseudo, self.user_password))
+        Logger.info('CHDCMenu: status_code req :'+ str(res.status_code))
 
         if(res.status_code == 201):
             self.message = "Successful logs send !"
         else:
             self.message = "Fail to send logs ..."
-        Logger.info('CHDCMenu: status_code req :'+ str(res.status_code))
 
     def on_connect(self,pseudo,password,listupload):
         self.user_pseudo = pseudo
