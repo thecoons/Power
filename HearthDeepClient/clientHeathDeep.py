@@ -76,7 +76,8 @@ class HearthDeepClientScreen(Screen):
         gen = [line for line in list_in_rep if line not in self.list_upload]
         for line in gen:
             last_touch = os.path.getmtime(self.logs_path+line)
-            Logger.info('CHDCMenu: '+line+' '+str(last_touch))
+            current_time = time.time()
+            Logger.info('CHDCMenu: '+line+' '+str(last_touch)+' '+current_time)
             if(last_touch > 60000):
                 self.send_log(line)
                 self.list_upload.append(line)
