@@ -79,7 +79,7 @@ class HearthDeepClientScreen(Screen):
             current_time = time.time()
             inter_time = current_time - last_touch
             Logger.info('CHDCMenu: '+line+' '+str(last_touch)+' '+str(current_time)+' '+str(inter_time))
-            if(inter_time > 60000):
+            if(inter_time > 600):
                 self.send_log(line)
                 self.list_upload.append(line)
 
